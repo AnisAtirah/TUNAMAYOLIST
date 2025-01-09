@@ -1,0 +1,81 @@
+/* General styling */
+.root {
+    -fx-background-color: #fffbe5;
+}
+
+/* Style for buttons */
+.button {
+    -fx-background-color: #ff9372;
+    -fx-text-fill: white;
+    -fx-font-family: "Verdana";
+    -fx-font-weight: bold ;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/*.add-button {
+    -fx-pref-width : 10px;
+    -fx-pref-height : 10px;
+    -fx-font-size : 15px;
+    -fx-aligment : center;
+}
+.sort-button {
+    -fx-pref-width : 80px;
+    -fx-pref-height : 10px;
+    -fx-font-size : 15px;
+    -fx-aligment : center;
+}*/
+/* Style for ListView cells */
+.list-cell {
+    -fx-padding: 10px;
+    -fx-background-color: #ffffff;
+}
+
+/* Style for Labels */
+.label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Verdana";
+}
+
+.label-intro {
+    -fx-font-family: "Arial"; /* Change to your preferred font */
+    -fx-font-size: 40px;      /* Set the font size */
+    -fx-font-weight: bold;    /* Make the font bold */
+    -fx-text-fill: #ff9372;  /* Change text color */
+    -fx-text-align: center;
+}
+
+.label-add-task {
+    -fx-font-family: "Verdana"; /* Change to your preferred font */
+    -fx-font-size: 20px;      /* Set the font size */
+    -fx-font-weight: bold;    /* Make the font bold */
+    -fx-text-fill: #ff9372;   /* Change text color */
+}
+
+/* Change font for the Completed Task label */
+.label-completed-task {
+    -fx-font-family: "Verdana"; /* Change to your preferred font */
+    -fx-font-size: 20px;        /* Set the font size */
+    -fx-font-weight: bold;    /* Set font weight to normal */
+    -fx-text-fill: #ff9372;     /* Change text color */
+}
+
+.label-sort {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9372;
+}
+
+.vbox-task-details {
+    -fx-background-color: #f9f9f9; /* Light gray background */
+    -fx-border-color: #d3d3d3; /* Light gray border */
+    -fx-border-width: 1px; /* Thin border */
+    -fx-padding: 10px; /* Inner padding */
+    -fx-spacing: 10px; /* Space between children */
+    -fx-font-family: "Verdana";
+    -fx-font-size: 14px; /* Default font size */
+}
+
+
