@@ -213,6 +213,7 @@ public class TunaMayo {
                     System.out.println("Which type of task do you want to search?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     type3 = input.nextInt();
+                    input.nextLine();
                     if (type3 == 1){ //For regular tasks
                     searchTask(title, describe, date, category, priority, taskNumber, status, dependency, input);
                     } else if (type3 == 2) { //For recurring tasks
