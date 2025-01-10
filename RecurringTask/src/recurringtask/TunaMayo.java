@@ -15,7 +15,7 @@ import java.util.InputMismatchException;
 import static recurringtask.RecurringTask.actionInDBR;
 import static recurringtask.RecurringTask.taskList;
 
-//this class is to used in method to detect cycle of dependencies
+//This class is used in method to detect cycle of dependencies
 class ListNode {
     int val;
     ListNode next;
@@ -27,7 +27,7 @@ class ListNode {
     }
 }
 
-public class TunaMayo { //make sure to change the object's class at line 650 to be the same as this main class's name
+public class TunaMayo {
     protected static int totalDEL;
     public static String recurrenceInterval; //"weekly", "daily", "monthly"
     public static LocalDate nextOccurence;
@@ -60,10 +60,11 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         ArrayList<Integer> dependency = new ArrayList<>();
         int [] FetchDatafromDB = new int[2];
         
-        //basically this method nak fetch balik task2 yg dah pernah dimasukkan dlm db
+        //This method is to fetch past tasks that has been stored inside database
         FetchDatafromDB = forNumberingTask(FetchDatafromDB, taskEXISTEDinDB, i, last_num, taskNumber, title, describe, date, category, priority, status, dependency, i_depend);
         recepient = EmailAddressfromDB();
         loadDBR();
+        //This method is for continuous checking of task's next occurrence 
         RecurringTask.scheduleRecurringTaskCheck();
         
         i = FetchDatafromDB[0]; 
@@ -108,7 +109,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             input.nextLine();
         
             switch (option){
-                case 1:
+                case 1: //Create a task
                     i = createTask(i, taskNumber, title, describe, date, category, priority, status, dependency, input);
                     int countNewTask = i - i_old; //ni untuk contohnye, sblm ni, user dh penah masuk 3 tasks, so lps tu dia run java again, so dptlah brp byk newTask yg dia create lps tu
                                    
@@ -118,32 +119,32 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                     }
                     i_old = i; 
                     break;
-                case 2:
+                case 2: //Create a recurring task
                     inc = RecurringTask.getNumTaskDB();
                     RecurringTask.addRecurringTask(inc);
                     break;
-                case 3:  
+                case 3:  //Display all tasks
                     System.out.println("");
                     actionInDB(4,0, null, null, null, null, null,0,0,null,null,0,0,null);
                     System.out.println("=== View All Recurring Tasks ===");
                     RecurringTask.actionInDBR(5, 0, null, null, null, null,null,0);
                     System.out.println("");
                     break;
-                case 4:
+                case 4: //Mark task as complete
                     System.out.println("Which type of task do you want to mark complete?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     int type = input.nextInt();
                     
-                    //arrays needed during the checking of existance of task dependencies in taskCompletion() method
+                    //Arrays needed during the checking of existence of task dependencies in taskCompletion() method
                     taskPreceding = Arrays.copyOf(taskPreceding, taskPreceding.length);
                     dependent = Arrays.copyOf(dependent, dependent.length);
                     nodes = Arrays.copyOf(nodes, nodes.length);
                         
                     boolean depend = false;
-                    if (type == 1) {
+                    if (type == 1) { //For regular tasks
                         taskCompletion(status, taskNumber, title, dependent, taskPreceding, depend, count_Depend, input);
                         System.out.println("");
-                    } else if (type == 2) {
+                    } else if (type == 2) { //For recurring tasks
                         System.out.println("\n=== Mark Task as Complete ===");
                         RecurringTask.actionInDBR(3, 0, null, null, null,null,null, 0);
                         if (taskList.isEmpty()){
@@ -154,7 +155,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         System.out.print("Which task do you want to mark as completed? (Insert number): \n");
                         int numTask = input.nextInt();
 
-                        //check dulu task complete = 1 dgn numTask = 1 tu sama ke..
+                        //Check whether the task has been completed in database
                         boolean taskAlrComp = RecurringTask.taskAlreadyComplete(numTask-1);
                         if (taskAlrComp){
                             System.out.println("Task is already completed.");
@@ -164,18 +165,18 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                             RecurringTask.completeTask(numTask-1);
                     }
                     break;
-                case 5:
+                case 5: //Deleting a task
                     System.out.println("");
                     System.out.println("========== Delete Task =========="); 
                     System.out.println("Which type of task do you want to delete?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     int type2 = input.nextInt();
-                    if (type2 == 1){
+                    if (type2 == 1){ //For regular tasks
                         deleteTaskArr(taskNumber, title, describe, date, category, priority, status, dependency, input);
                         totalDEL++;
                         actionInDB(13,0, null, null, null, null, null,0,0,null,null,0,0,null);
                         i=i-1;
-                    } else if (type2 == 2) {
+                    } else if (type2 == 2) { //For recurring tasks
                         actionInDBR(3, 0, null, null, null,null,null, 0);
                         System.out.println("");
                         System.out.print("Which task do you want to delete? (Insert number) : ");
@@ -190,37 +191,37 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                     }
                     System.out.println("");
                     break;
-                case 6:
+                case 6: //Sorting tasks
                     System.out.println("");
                     System.out.println("========== Sort Task =========="); 
                     System.out.println("Which type of task do you want to search?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     int type3 = input.nextInt();
-                    if (type3 == 1){
+                    if (type3 == 1){ //For regular tasks
                         sortTask(taskNumber, title, describe, date, category, priority, status,input);
-                    } else if (type3 == 2) {
+                    } else if (type3 == 2) { //For recurring tasks
                         sortTaskR(taskList, input);
                     }
                     break;
-                case 7:
+                case 7: //Searching tasks by a search key
                     System.out.println("");
                     System.out.println("========== Search Task =========="); 
                     System.out.println("Which type of task do you want to search?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     type3 = input.nextInt();
-                    if (type3 == 1){
+                    if (type3 == 1){ //For regular tasks
                     searchTask(title, describe, date, category, priority, taskNumber, status, dependency, input);
-                    } else if (type3 == 2) {
+                    } else if (type3 == 2) { //For recurring tasks
                         RecurringTask.actionInDBR(14, 0, null, null, null,null,null, 0);
                     }
                     break;
-                case 8:
+                case 8: //Editing a task
                     System.out.println("\n=== Edit Task ===");
                     System.out.println("Which type of task do you want to edit?\n1. Regular Task\n2. Recurring Task");
                     System.out.print("[ 1 / 2 ] : ");
                     type3 = input.nextInt();
                     
-                    if (type3 == 1){
+                    if (type3 == 1){ //For regular tasks
                     System.out.print("Enter the task number you want to edit: ");
                     int taskToEdit = input.nextInt();
                     
@@ -231,7 +232,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         int edit = input.nextInt();
                         while (edit!=7){
                             switch (edit){
-                                case 1:
+                                case 1: //Edit title
                                     System.out.print("Enter the new title: ");
                                     input.nextLine();
                                     String newTitle = input.nextLine();
@@ -239,36 +240,36 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                                     System.out.println("New title is: "+ title.get(taskToEdit-1));
                                     actionInDB(8,taskToEdit,newTitle,null ,null,null,null,0,0,null,null,0,0,null); //update task title in database
                                     break;
-                                case 2:
+                                case 2: //Edit description
                                     System.out.print("Enter the new description: ");
                                     input.nextLine();
                                     String newDescription = input.nextLine();
                                     describe.set(taskToEdit-1, newDescription);
                                     actionInDB(9,taskToEdit,null,newDescription,null,null,null,0,0,null,null,0,0,null); //update task desc in database
                                     break;
-                                case 3:
+                                case 3: //Edit due date
                                     System.out.print("Enter the new due date (YYYY-MM-DD): ");
                                     input.nextLine();
                                     String newDue = input.nextLine();
                                     date.set(taskToEdit-1, newDue);
                                     actionInDB(10,taskToEdit,null,null,newDue,null,null,0,0,null,null,0,0,null); //update task due in database
                                     break;
-                                case 4:
+                                case 4: //Edit category
                                     System.out.print("Enter the new category (Homework / Personal / Work) : ");
                                     input.nextLine();
                                     String newCategory = input.nextLine();
                                     category.set(taskToEdit-1, newCategory);
                                     actionInDB(11,taskToEdit,null,null,null,newCategory,null,0,0,null,null,0,0,null); //update task category in database
                                     break;
-                                case 5:
+                                case 5: //Edit priority level
                                     System.out.println("Enter the new priority level (High, Medium, Low)");
                                     input.nextLine();
                                     String newPriority = input.nextLine();
                                     priority.set(taskToEdit-1, newPriority);
                                     actionInDB(12,taskToEdit,null,null ,null,null,newPriority,0,0,null,null,0,0,null); //update task category in database
                                     break;
-                                case 6:
-                                    //arrays needed for coding of task dependencies
+                                case 6: //Edit dependency
+                                    //Arrays needed for coding of task dependencies
                                     taskPreceding = Arrays.copyOf(taskPreceding, taskPreceding.length + 1);
                                     dependent = Arrays.copyOf(dependent, dependent.length + 1);
                                     nodes = Arrays.copyOf(nodes, nodes.length);
@@ -286,7 +287,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                             edit = input.nextInt();
                             } 
                         }
-                    } else if (type3 == 2){
+                    } else if (type3 == 2){ //For recurring tasks
                         RecurringTask.actionInDBR(3, 0, null, null, null,null,null, 0);
                         System.out.println("");
                         System.out.print("Which task do you want to edit? (Insert number): ");
@@ -302,16 +303,16 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         
                             while (edit1!=5){
                                 switch (edit1){
-                                    case 1:
+                                    case 1: //Edit title
                                         System.out.print("Enter the new title: ");
                                         input.nextLine();
                                         String newTitle = input.nextLine();
-                                        task.updateTitle(newTitle);
+                                        task.updateTitle(newTitle); 
                                         System.out.println("Task '"+ RecurringTask.getTitleDB(taskToEditR-1) +"' has been updated to '"+newTitle+"'!");
                                         RecurringTask.actionInDBR(9, taskToEditR-1, newTitle, null, null, null,null,0);
             
                                         break;
-                                    case 2:
+                                    case 2: //Edit description
                                         System.out.print("Enter the new description: ");
                                         input.nextLine();
                                         String newDescription = input.nextLine();
@@ -319,16 +320,16 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                                         System.out.println("Task '"+ RecurringTask.getTitleDB(taskToEditR-1) +"' has been updated to a new description '"+newDescription+"'!");
                                         RecurringTask.actionInDBR(10, taskToEditR-1, null, newDescription, null, null,null,0);
                                         break;
-                                    case 3:
+                                    case 3: //Edit recurrence interval
                                         System.out.print("Enter the new recurrence interval (Daily / Weekly / Monthly) : ");
                                         input.nextLine();
                                         String newRecurrenceInterval = input.nextLine();
-                                        recurringTask.updateRecurrenceInterval(newRecurrenceInterval); //update recurrence interval, next occurence, due date
+                                        recurringTask.updateRecurrenceInterval(newRecurrenceInterval); //Update recurrence interval, next occurrence, due date
                                         System.out.println("Task '"+ RecurringTask.getTitleDB(taskToEditR-1) +"' has been updated to a new recurrence interval '"+newRecurrenceInterval+"'!");
                                         RecurringTask.actionInDBR(11, taskToEditR-1, null, null, newRecurrenceInterval,null,null, 0);
                                         RecurringTask.actionInDBR(13, taskToEditR-1, null, null, null,null,null, 0);
                                         break;
-                                    case 4:
+                                    case 4: //Edit task completion to incomplete
                                         System.out.print("This is to mark the task incomplete. Proceed? (Yes / No) : ");
                                         input.nextLine();
                                         String ans = input.nextLine();
@@ -347,18 +348,18 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                                         System.out.println("Enter valid input");
                                         break;
                                 }
-                        System.out.print("\nWhat would you like to edit? \n1. Title\n2. Description\n3. Recurrence Interval\n4. Completion\n5. Cancel \nEnter no.: ");
+                        System.out.print("\nWhat would you like to edit? \n1. Title\n2. Description\n3. Recurrence Interval\n4. Completion\n5. Cancel \nEnter no.: "); 
                         edit1 = input.nextInt();
                         }
                       }
                     }
                     System.out.println("");
                     break;
-                case 9:
+                case 9: //Display data analytics
                     dataAnalytics(i,taskNumber,status,category);
                     System.out.println("\n");
                     break;
-                case 10:
+                case 10: //Exit
                     System.out.println("Before exit, would you like to receive email notification from us? \nWe will help remind you when the due date for your tasks is approaching.");
                     System.out.print("(Enter \"No\" if you have already entered your email address) [Yes/No]: ");
                     if (input.nextLine().equalsIgnoreCase("yes")){
@@ -377,35 +378,35 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         } System.exit(0);
     } 
     
-    
-    //basically this method nak fetch balik data2 yg dah ade dlm db, so then bile user stop run java for 1st time, then the 2nd time dia run java, user still ade data yg dia dh masukkan tdi
+
+    //Fetch past tasks inside database and added to arrayList
     public static int [] forNumberingTask(int [] justEXISTEDtask, boolean taskEXIST, int i, int last_num, ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status, ArrayList<Integer> dependency, int i_depend) {
         Connection conn1 = null; 
         try {
-        String url1 = "jdbc:mysql://localhost:3306/tunamayo_db"; //insert your database name
+        String url1 = "jdbc:mysql://localhost:3306/tunamayo_db";
         String user = "root";
         String password = "";
 
-        //connect with your database
+        //Connect with your database
         conn1 = DriverManager.getConnection(url1, user, password);
         if (conn1 != null) {
             int taskEXISTEDinDB = 0;
             int for_i_depend = 2;
 
-            //NAK CARIK APE INDEX TASK LAST DALAM DB, THEN BOLEH FETCH DATA DRI DB MASUK SINI
+            //Finding the index of the last task inside database
             String sql4 = "SELECT * FROM task order by numTask desc limit 1";
             var carik = conn1.prepareStatement(sql4);
 
             var last = carik.executeQuery();
             while (last.next()){
-                taskEXIST = true; //if true, maksudnye before this, dah ade task pernah dimasukkan dlm db
+                taskEXIST = true; //Tasks have been added into database previously
                 last_num = last.getInt(1);
                 i = last_num+1;
 
                 String sql5 = "SELECT * FROM task order by numTask asc";
                 var isiArr = conn1.prepareStatement(sql5);
 
-                var fill = isiArr.executeQuery(); //maksud isiArr ni is nak isi array dgn task2 yg dh pernah added dlm db, so that kat main() nnti user boleh keep smbung dia punye to do list even if java is distop runnye byk kali
+                var fill = isiArr.executeQuery(); 
                 while (fill.next()){
                     justEXISTEDtask = Arrays.copyOf(justEXISTEDtask, justEXISTEDtask.length + (i_depend+1));
                     taskNumber.add((fill.getInt(1)+1));
@@ -458,15 +459,16 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         }
         return justEXISTEDtask;
     }
-    
+
+    //Fetch past recurring tasks from database and insert to taskList
     public static void loadDBR(){
         Connection conn1 = null; 
         try {
-            String url1 = "jdbc:mysql://localhost:3306/tunamayo_db"; //insert your database name
+            String url1 = "jdbc:mysql://localhost:3306/tunamayo_db";
             String user = "root";
             String password = "";
             
-            //connect with your database
+            //Connection with your database
             conn1 = DriverManager.getConnection(url1, user, password);
             if (conn1 != null) {
                 String sql = "SELECT numTask, Title, Description, RecurrenceInterval, NextOccurence, Due, Completion FROM recurtask"; // Adjust table/column names
@@ -488,7 +490,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                     LocalDate duedate2 = duedate.toLocalDate();
 
 
-                    RecurringTask task = new RecurringTask(currentNumTask, title1, description1, recurrence, nextocc2, duedate2, isCompleted); // Assuming Task has this constructor
+                    RecurringTask task = new RecurringTask(currentNumTask, title1, description1, recurrence, nextocc2, duedate2, isCompleted);
                     taskList.add(task); 
                     i = Math.max(i, numTask + 1);
                     currentNumTask++;
@@ -508,7 +510,8 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             }
         }
     }
-        
+
+    //Method to create a task
     public static int createTask(int i, ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status, ArrayList<Integer> dependency, Scanner input){
         while (true) {
             System.out.println("");
@@ -565,7 +568,8 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             }
         }
     }
-    
+
+    //Method to delete a task
     public static void deleteTaskArr(ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status, ArrayList<Integer> dependency, Scanner input){
 
         System.out.println("\n========== Delete Task ==========");
@@ -634,6 +638,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
     
 }
 
+    //Method to set a task as completed
     public static void taskCompletion(ArrayList<Integer> status, ArrayList<Integer> taskNumber, ArrayList<String> taskTitle, int [] dependent, int [] taskPreceding, boolean depend, int count_Depend, Scanner input){
         System.out.println("\n=== Mark Task as Complete ===");
         System.out.print("Enter the task number you want to mark as complete: ");
@@ -690,6 +695,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         }
     }
 
+    //Method for setting task dependencies
     public static void taskDependency(int i_depend, ListNode[] nodes, int[] dependent, int[] taskPreceding, ArrayList<String> title, Scanner input, int taskToEdit) {
         System.out.println("\n=== Set Task Dependency ===");
         System.out.println("\nEnter task number that depends on another task: " + taskToEdit);
@@ -716,7 +722,8 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             System.out.println("\nTask \"" + title.get(dependent[i_depend]) + "\" now depends on \"" + title.get(taskPreceding[i_depend]) + "\".");
         }
     }
-    
+
+    //Method for sorting tasks
     public static void sortTask(ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status, Scanner input) {
    
     CatchData(taskNumber, title, describe, date, category, priority, status);
@@ -844,6 +851,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         System.out.println("");
     } 
 
+    //Methods for swapping
     public static void swap1 (ArrayList<String> list, int i, int j){
         String temp1 = list.get(i);
         list.set(i, list.get(j));
@@ -856,6 +864,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         list.set(j, temp2);
     }
 
+    // Method to assign value according to its priority
     public static int priorityRank (String priority) {
         //assign value for each priority to make it easier to compare 
             if (priority.equalsIgnoreCase("low")) 
@@ -868,6 +877,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             return 0;
     }
 
+    //Sorting recurring tasks
     public static void sortTaskR(ArrayList<Task> taskList, Scanner input) {
    
     taskList.clear();
@@ -1007,13 +1017,15 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         }
         System.out.println("\n");
     } 
-    
+
+    //Method for swapping tasks
     public static void swap3 (ArrayList<Task> taskList, int i, int j){
         Task temp1 = taskList.get(i);
         taskList.set(i, taskList.get(j));
         taskList.set(j, temp1);
     }
-    
+
+    //Search tasks
     public static void searchTask(ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> taskNumber, ArrayList<Integer> status, ArrayList<Integer> dependency, Scanner input) {
     
     CatchData(taskNumber, title, describe, date, category, priority, status);
@@ -1059,6 +1071,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         System.out.println("");
     }
 
+    //Retrieving email address from database
     public static String EmailAddressfromDB(){
         Connection conn1 = null; 
         String address = "";
@@ -1082,7 +1095,8 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         }
         return address;
     }
-    
+
+    //Method for notifying through email if due date 24 hours away
     public static void dueNoti(ArrayList<String> title, ArrayList<String> date, String recepient) throws Exception{
         LocalDateTime currentDate = LocalDateTime.now().withSecond(0).withNano(0); // Current date, hours and minutes
          
@@ -1090,7 +1104,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         for (int i_date=0;i_date<date.size();i_date++){
             LocalDate duedate = LocalDate.parse(date.get(i_date), format);
             LocalDateTime due = duedate.atStartOfDay(); 
-            if (due.minusDays(1).compareTo(currentDate)==0){ //check if its already 00:00 of a day before due date.
+            if (due.minusDays(1).compareTo(currentDate)==0){ //Check if it is already 00:00 of a day before the due date.
                 System.out.println("=== Email Notification ===");
                 System.out.println("Sending reminder email for task "+ title.get(i_date) + " due in 24 hours.");
                 TunaMayowithEmail.sendMailNoti(recepient, title, i_date);
@@ -1098,7 +1112,8 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
             }
         }
     }
-    
+
+    //Method for data analytics
     public static void dataAnalytics(int i, ArrayList<Integer> taskNumber, ArrayList<Integer> status, ArrayList<String> category){
         System.out.println("\n=== Analytics Dashboard ===");
         int taskInR = RecurringTask.getNumTaskDB();
@@ -1129,19 +1144,19 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         System.out.print("% \n> Task Categories:- Homework: "+ hw +", Personal: "+ personal +", Work: "+ work + ", Recurring Tasks: "+ taskInR + ", Others: "+ other);
     }
     
-    //this method ni khas for action2 nk dibuat kat db;
+    //Method for actions inside database
     public static void actionInDB(int actforDB, int i, String title, String describe , String date, String category, String priority, int taskDEL, int taskDONE, int [] dependent, int [] taskPreceding, int i_depend, int status, String recepient){
         Connection conn1 = null; 
         try {
-            String url1 = "jdbc:mysql://localhost:3306/tunamayo_db"; //insert your database name
+            String url1 = "jdbc:mysql://localhost:3306/tunamayo_db";
             String user = "root";
             String password = "";
             
-            //connect with your database
+            //Connection with your database
             conn1 = DriverManager.getConnection(url1, user, password);
             if (conn1 != null) {
                 switch (actforDB){
-                    case 1:
+                    case 1: //Inserting task into database
                         String sql1 = "insert into task(numTask, Title, Description, Due, Category, Priority) values (?,?,?,?,?,?)";
                         var myStat = conn1.prepareStatement(sql1);
 
@@ -1154,7 +1169,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
 
                         myStat.executeUpdate();
                         break;
-                    case 2:
+                    case 2: //Delete task from database 
                         String sql2 = "DELETE FROM task WHERE numTask=?";
                         myStat = conn1.prepareStatement(sql2);
 
@@ -1162,7 +1177,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         
                         myStat.execute();
                         break;
-                    case 3:
+                    case 3: //Update column 'Completion' when task is complete 
                         String sql3 = "UPDATE task SET Completion=1 WHERE numTask=?";
                         var update = conn1.prepareStatement(sql3);
 
@@ -1170,7 +1185,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
 
                         update.executeUpdate();
                         break;
-                    case 4:
+                    case 4: //Display all tasks 
                         System.out.println("=== View All Tasks ===");
                         String sql4 = "SELECT * FROM task ORDER BY numTask ASC";
                         var check = conn1.prepareStatement(sql4);
@@ -1201,7 +1216,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         
                         System.out.println("");
                         break;
-                    case 5:
+                    case 5: //Update column 'Dependency' 
                         String sql5 = "UPDATE task SET Dependency=? WHERE numTask=?";
                         update = conn1.prepareStatement(sql5);
 
@@ -1211,7 +1226,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.executeUpdate();
                         break;
                     
-                    case 6 :
+                    case 6 : //Update columns 'numTask', 'Description', 'Due', 'Category', 'Priority' and 'Completion' according to the task's title
                         String sql6 = "UPDATE task SET numTask =?, Description = ?, Due = ?, Category = ?, Priority = ?, Completion = ? WHERE Title = ?";
                         update = conn1.prepareStatement(sql6);
                 
@@ -1225,7 +1240,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
 
                         update.executeUpdate();
                         break;
-                    case 7:
+                    case 7: //Update column emailAddress from table user_email 
                         String sql7 = "UPDATE user_email SET emailAddress=?";
                         update = conn1.prepareStatement(sql7);
 
@@ -1233,7 +1248,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
 
                         update.executeUpdate();
                         break;
-                    case 8: //edit title
+                    case 8: //Edit title of a task
                         String sql8 = "UPDATE task SET Title = ? WHERE numTask = ?";
                         update = conn1.prepareStatement(sql8);
                 
@@ -1241,7 +1256,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.setInt(2, i);
                         update.executeUpdate();
                         break;
-                    case 9: //edit title
+                    case 9: //Edit description of a task
                         String sql9 = "UPDATE task SET Description = ? WHERE numTask = ?";
                         update = conn1.prepareStatement(sql9);
                 
@@ -1249,7 +1264,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.setInt(2, i);
                         update.executeUpdate();
                         break;
-                    case 10: //edit title
+                    case 10: //Edit due date of a task
                         String sql10 = "UPDATE task SET Due = ? WHERE numTask = ?";
                         update = conn1.prepareStatement(sql10);
                 
@@ -1257,7 +1272,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.setInt(2, i);
                         update.executeUpdate();
                         break;
-                    case 11:
+                    case 11: //Update category of a task
                         String sql11 = "UPDATE task SET Category = ? WHERE numTask = ?";
                         update = conn1.prepareStatement(sql11);
                 
@@ -1265,7 +1280,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.setInt(2, i);
                         update.executeUpdate();
                         break;
-                    case 12:
+                    case 12: //Update priority of a task
                         String sql12 = "UPDATE task SET Priority = ? WHERE numTask = ?";
                         update = conn1.prepareStatement(sql12);
                 
@@ -1273,7 +1288,7 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
                         update.setInt(2, i);
                         update.executeUpdate();
                         break;
-                    case 13:
+                    case 13: //Update total_deleted_task from table deleted_task
                         String sql13 = "UPDATE deleted_task SET total_deleted_task=?";
                         update = conn1.prepareStatement(sql13);
 
@@ -1298,8 +1313,9 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         } 
     }
 
+    //Method to fetch past data/tasks from database and add to arraylist
     public static void CatchData(ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status){
-       // to makse sure the arraylist di clear kan before fetching the database or else dia akan duplicate
+       // To make sure the arraylist  is cleared to prevent duplication
         taskNumber.clear();
         title.clear();
         describe.clear();
@@ -1319,18 +1335,18 @@ public class TunaMayo { //make sure to change the object's class at line 650 to 
         String user = "root";
         String password = "";
 
-        //connect with your database
+        //Connect with your database
         conn1 = DriverManager.getConnection(url1, user, password);
         
-        //command to select data
-        String sql="select * from task";
+        //Command to select data
+        String sql = "SELECT * from task";
         p = conn1.prepareStatement(sql);
         rs = p.executeQuery();
         
-        //fetch until there is no data
+        //Fetch until there is no data
         while (rs.next()) {
             
-            //update data to arraylist
+            //Update data to arraylist
             taskNumber.add (rs.getInt("numTask")+1);
             title.add (rs.getString("Title"));
             describe.add (rs.getString("Description"));
