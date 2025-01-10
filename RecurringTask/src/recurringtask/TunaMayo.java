@@ -176,6 +176,10 @@ public class TunaMayo {
                         totalDEL++;
                         actionInDB(13,0, null, null, null, null, null,0,0,null,null,0,0,null);
                         i=i-1;
+                        if (i==0){
+                            totalDEL = 0;
+                            actionInDB(13,0, null, null, null, null, null,0,0,null,null,0,0,null);
+                        }
                     } else if (type2 == 2) { //For recurring tasks
                         actionInDBR(3, 0, null, null, null,null,null, 0);
                         System.out.println("");
@@ -383,30 +387,30 @@ public class TunaMayo {
     public static int [] forNumberingTask(int [] justEXISTEDtask, boolean taskEXIST, int i, int last_num, ArrayList<Integer> taskNumber, ArrayList<String> title, ArrayList<String> describe, ArrayList<String> date, ArrayList<String> category, ArrayList<String> priority, ArrayList<Integer> status, ArrayList<Integer> dependency, int i_depend) {
         Connection conn1 = null; 
         try {
-        String url1 = "jdbc:mysql://localhost:3306/tunamayo_db";
+        String url1 = "jdbc:mysql://localhost:3306/tunamayo_db"; //insert your database name
         String user = "root";
         String password = "";
 
-        //Connect with your database
+        //connect with your database
         conn1 = DriverManager.getConnection(url1, user, password);
         if (conn1 != null) {
             int taskEXISTEDinDB = 0;
             int for_i_depend = 2;
 
-            //Finding the index of the last task inside database
+            //NAK CARIK APE INDEX TASK LAST DALAM DB, THEN BOLEH FETCH DATA DRI DB MASUK SINI
             String sql4 = "SELECT * FROM task order by numTask desc limit 1";
             var carik = conn1.prepareStatement(sql4);
 
             var last = carik.executeQuery();
             while (last.next()){
-                taskEXIST = true; //Tasks have been added into database previously
+                taskEXIST = true; //if true, maksudnye before this, dah ade task pernah dimasukkan dlm db
                 last_num = last.getInt(1);
                 i = last_num+1;
 
                 String sql5 = "SELECT * FROM task order by numTask asc";
                 var isiArr = conn1.prepareStatement(sql5);
 
-                var fill = isiArr.executeQuery(); 
+                var fill = isiArr.executeQuery(); //maksud isiArr ni is nak isi array dgn task2 yg dh pernah added dlm db, so that kat main() nnti user boleh keep smbung dia punye to do list even if java is distop runnye byk kali
                 while (fill.next()){
                     justEXISTEDtask = Arrays.copyOf(justEXISTEDtask, justEXISTEDtask.length + (i_depend+1));
                     taskNumber.add((fill.getInt(1)+1));
@@ -427,21 +431,23 @@ public class TunaMayo {
                         
                     }
                     taskEXISTEDinDB++;
+                    String sql = "SELECT * FROM deleted_task";
+                    var totDEL = conn1.prepareStatement(sql);
+
+                    var getTotDEL = totDEL.executeQuery();
+                    if (getTotDEL.next()){
+                    totalDEL = getTotDEL.getInt(1);}
                 }
             } 
             if (taskEXIST==false) {
                 i = 0;
                 i_depend = 0;
+                totalDEL = 0;
+                actionInDB(13,0, null, null, null, null, null,0,0,null,null,0,0,null);
             } 
             justEXISTEDtask[0] = i;
             justEXISTEDtask[1] = i_depend;
             
-            String sql = "SELECT * FROM deleted_task";
-            var totDEL = conn1.prepareStatement(sql);
-
-            var getTotDEL = totDEL.executeQuery();
-            if (getTotDEL.next()){
-            totalDEL = getTotDEL.getInt(1);}
         }
         }catch(SQLException ex){
             System.out.println("An error occurred");
